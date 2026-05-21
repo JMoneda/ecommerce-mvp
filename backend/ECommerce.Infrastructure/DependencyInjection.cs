@@ -18,12 +18,16 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite(config.GetConnectionString("DefaultConnection")));
 
-        services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
+        // AddIdentityCore (no AddIdentity): la API es stateless con JWT, no usa
+        // autenticación por cookies. AddIdentity registraría un esquema de cookies
+        // como predeterminado y sobrescribiría al JWT Bearer.
+        services.AddIdentityCore<ApplicationUser>(opt =>
         {
             opt.Password.RequiredLength = 6;
             opt.Password.RequireNonAlphanumeric = false;
             opt.User.RequireUniqueEmail = true;
         })
+        .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 

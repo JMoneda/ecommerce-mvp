@@ -38,15 +38,17 @@ public class CheckoutCommandHandler : IRequestHandler<CheckoutCommand, Result<Or
             _productRepo.Update(product);
         }
 
+        // Se capturan los nombres antes de vaciar el carrito.
+        var productNames = cart.Items.ToDictionary(i => i.ProductId, i => i.Product?.Name ?? string.Empty);
+
         var orderItems = cart.Items.Select(i => OrderItem.Create(i.ProductId, i.Quantity, i.UnitPrice)).ToList();
         var order = Order.Create(cmd.UserId, orderItems);
         await _orderRepo.AddAsync(order, ct);
         cart.Clear();
-        _cartRepo.Update(cart);
         await _uow.SaveChangesAsync(ct);
 
         var items = order.Items.Select(i => new OrderItemDto(
-            i.ProductId, cart.Items.FirstOrDefault(c => c.ProductId == i.ProductId)?.Product?.Name ?? "",
+            i.ProductId, productNames.GetValueOrDefault(i.ProductId, string.Empty),
             i.Quantity, i.UnitPrice, i.Subtotal)).ToList();
 
         return Result<OrderDto>.Success(new OrderDto(order.Id, order.OrderNumber, order.Status,

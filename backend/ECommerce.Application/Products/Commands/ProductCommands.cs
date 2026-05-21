@@ -33,7 +33,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         await _uow.SaveChangesAsync(ct);
 
         return Result<ProductDto>.Success(new ProductDto(product.Id, product.Code, product.Name,
-            product.Description, product.ImageUrl, product.Size, product.Color, product.Price, product.Stock, product.Stock > 0));
+            product.Description, product.ImageUrl, (int)product.Size, product.Color, product.Price, product.Stock, product.Stock > 0));
     }
 }
 
@@ -53,7 +53,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         await _uow.SaveChangesAsync(ct);
 
         return Result<ProductDto>.Success(new ProductDto(product.Id, product.Code, product.Name,
-            product.Description, product.ImageUrl, product.Size, product.Color, product.Price, product.Stock, product.Stock > 0));
+            product.Description, product.ImageUrl, (int)product.Size, product.Color, product.Price, product.Stock, product.Stock > 0));
     }
 }
 

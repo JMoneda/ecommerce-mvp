@@ -20,7 +20,7 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumer
     {
         var products = await _repo.SearchAsync(q.Name, q.Description, q.Code, q.Size, q.Color, ct);
         return products.Select(p => new ProductDto(p.Id, p.Code, p.Name, p.Description,
-            p.ImageUrl, p.Size, p.Color, p.Price, p.Stock, p.Stock > 0));
+            p.ImageUrl, (int)p.Size, p.Color, p.Price, p.Stock, p.Stock > 0));
     }
 }
 
@@ -33,6 +33,6 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
     {
         var p = await _repo.GetByIdAsync(q.Id, ct);
         return p is null ? null : new ProductDto(p.Id, p.Code, p.Name, p.Description,
-            p.ImageUrl, p.Size, p.Color, p.Price, p.Stock, p.Stock > 0);
+            p.ImageUrl, (int)p.Size, p.Color, p.Price, p.Stock, p.Stock > 0);
     }
 }

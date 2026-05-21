@@ -24,27 +24,25 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, Result<
         if (product is null) return Result<CartDto>.Failure("Product not found.");
         if (!product.HasStock(cmd.Quantity)) return Result<CartDto>.Failure("Insufficient stock.");
 
-        var cart = await _cartRepo.GetByUserIdAsync(cmd.UserId, ct)
-                   ?? Domain.Entities.Cart.Create(cmd.UserId);
-
-        cart.AddItem(cmd.ProductId, cmd.Quantity, product.Price);
-
-        if (cart.Id == Guid.Empty || !await CartExistsAsync(cmd.UserId, ct))
+        var cart = await _cartRepo.GetByUserIdAsync(cmd.UserId, ct);
+        if (cart is null)
+        {
+            // Carrito nuevo: se inserta el grafo completo.
+            cart = Domain.Entities.Cart.Create(cmd.UserId);
+            cart.AddItem(cmd.ProductId, cmd.Quantity, product.Price);
             await _cartRepo.AddAsync(cart, ct);
+        }
         else
-            _cartRepo.Update(cart);
-
+        {
+            // Carrito existente: ya está rastreado por EF, basta con mutarlo.
+            cart.AddItem(cmd.ProductId, cmd.Quantity, product.Price);
+        }
         await _uow.SaveChangesAsync(ct);
 
-        var items = cart.Items.Select(i => new CartItemDto(
-            i.Id, i.ProductId, i.Product?.Name ?? product.Name, i.Product?.ImageUrl ?? product.ImageUrl,
-            i.Quantity, i.UnitPrice, i.Subtotal)).ToList();
-
-        return Result<CartDto>.Success(new CartDto(cart.Id, items, cart.Total));
+        // Se relee para tener la navegación Product cargada en todos los ítems.
+        var saved = await _cartRepo.GetByUserIdAsync(cmd.UserId, ct);
+        return Result<CartDto>.Success(CartMapper.ToDto(saved!));
     }
-
-    private async Task<bool> CartExistsAsync(Guid userId, CancellationToken ct)
-        => await _cartRepo.GetByUserIdAsync(userId, ct) is not null;
 }
 
 public class RemoveFromCartCommandHandler : IRequestHandler<RemoveFromCartCommand, Result<CartDto>>
@@ -59,14 +57,8 @@ public class RemoveFromCartCommandHandler : IRequestHandler<RemoveFromCartComman
         if (cart is null) return Result<CartDto>.Failure("Cart not found.");
 
         cart.RemoveItem(cmd.ProductId);
-        _repo.Update(cart);
         await _uow.SaveChangesAsync(ct);
-
-        var items = cart.Items.Select(i => new CartItemDto(
-            i.Id, i.ProductId, i.Product.Name, i.Product.ImageUrl,
-            i.Quantity, i.UnitPrice, i.Subtotal)).ToList();
-
-        return Result<CartDto>.Success(new CartDto(cart.Id, items, cart.Total));
+        return Result<CartDto>.Success(CartMapper.ToDto(cart));
     }
 }
 
@@ -82,13 +74,20 @@ public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemComman
         if (cart is null) return Result<CartDto>.Failure("Cart not found.");
 
         cart.UpdateItemQuantity(cmd.ProductId, cmd.Quantity);
-        _repo.Update(cart);
         await _uow.SaveChangesAsync(ct);
+        return Result<CartDto>.Success(CartMapper.ToDto(cart));
+    }
+}
 
+public static class CartMapper
+{
+    public static CartDto ToDto(Domain.Entities.Cart cart)
+    {
         var items = cart.Items.Select(i => new CartItemDto(
-            i.Id, i.ProductId, i.Product.Name, i.Product.ImageUrl,
+            i.Id, i.ProductId,
+            i.Product?.Name ?? string.Empty,
+            i.Product?.ImageUrl ?? string.Empty,
             i.Quantity, i.UnitPrice, i.Subtotal)).ToList();
-
-        return Result<CartDto>.Success(new CartDto(cart.Id, items, cart.Total));
+        return new CartDto(cart.Id, items, cart.Total);
     }
 }

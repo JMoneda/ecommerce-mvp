@@ -1,3 +1,4 @@
+using ECommerce.Domain.Common;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -20,6 +21,17 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+        // Las entidades de dominio generan su Id en el constructor (Guid.NewGuid()).
+        // Sin esto, EF asume claves generadas por la BD y trata a las entidades
+        // hijas nuevas (con Id ya asignado) como existentes -> UPDATE en vez de INSERT.
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                builder.Entity(entityType.ClrType)
+                       .Property(nameof(BaseEntity.Id))
+                       .ValueGeneratedNever();
+        }
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
