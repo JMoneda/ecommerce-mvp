@@ -17,7 +17,7 @@ import { Product } from '../../core/models/product.model';
     } @else if (product()) {
       <div class="detail">
         <div class="detail-img">
-          <img [src]="product()!.imageUrl" [alt]="product()!.name" onerror="this.src='/placeholder.jpg'">
+          <img [src]="product()!.imageUrl" [alt]="product()!.name" onerror="this.onerror=null;this.src='/placeholder.svg'">
         </div>
         <div class="detail-info">
           <span class="code">{{ product()!.code }}</span>

@@ -18,7 +18,7 @@ import { OrderService } from '../../core/services/order.service';
         <div class="cart-items">
           @for (item of cartService.cart()!.items; track item.id) {
             <div class="cart-item">
-              <img [src]="item.imageUrl" [alt]="item.productName" class="item-img" onerror="this.src='/placeholder.jpg'">
+              <img [src]="item.imageUrl" [alt]="item.productName" class="item-img" onerror="this.onerror=null;this.src='/placeholder.svg'">
               <div class="item-info">
                 <h3>{{ item.productName }}</h3>
                 <p>{{ item.unitPrice | currency:'COP':'symbol':'1.0-0' }} c/u</p>

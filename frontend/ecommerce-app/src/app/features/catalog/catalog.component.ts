@@ -47,7 +47,7 @@ import { Product, ProductColor, ProductSize } from '../../core/models/product.mo
             <div class="product-card">
               <a [routerLink]="['/product', product.id]">
                 <div class="product-img">
-                  <img [src]="product.imageUrl" [alt]="product.name" onerror="this.src='/placeholder.jpg'">
+                  <img [src]="product.imageUrl" [alt]="product.name" onerror="this.onerror=null;this.src='/placeholder.svg'">
                   @if (!product.isAvailable) {
                     <span class="sold-out">Agotado</span>
                   }
