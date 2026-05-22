@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -36,13 +36,13 @@ import { OrderService } from '../../core/services/order.service';
         <div class="cart-summary">
           <div class="total">Total: <strong>{{ cartService.total() | currency:'COP':'symbol':'1.0-0' }}</strong></div>
           <p class="note">🚚 Pago contra entrega</p>
-          <button (click)="checkout()" class="btn-checkout" [disabled]="checkingOut">
-            {{ checkingOut ? 'Procesando...' : 'Finalizar Compra' }}
+          <button (click)="checkout()" class="btn-checkout" [disabled]="checkingOut()">
+            {{ checkingOut() ? 'Procesando...' : 'Finalizar Compra' }}
           </button>
         </div>
       }
-      @if (successMsg) { <p class="success">{{ successMsg }}</p> }
-      @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
+      @if (successMsg()) { <p class="success">{{ successMsg() }}</p> }
+      @if (errorMsg()) { <p class="error">{{ errorMsg() }}</p> }
     </div>
   `,
   styles: [`
@@ -73,9 +73,9 @@ export class CartComponent implements OnInit {
   private orderService = inject(OrderService);
   private router = inject(Router);
 
-  checkingOut = false;
-  successMsg = '';
-  errorMsg = '';
+  checkingOut = signal(false);
+  successMsg = signal('');
+  errorMsg = signal('');
 
   ngOnInit() { this.cartService.loadCart().subscribe(); }
 
@@ -89,17 +89,17 @@ export class CartComponent implements OnInit {
   }
 
   checkout() {
-    this.checkingOut = true;
-    this.errorMsg = '';
+    this.checkingOut.set(true);
+    this.errorMsg.set('');
     this.orderService.checkout().subscribe({
       next: order => {
         this.cartService.clearLocal();
-        this.successMsg = `¡Pedido ${order.orderNumber} creado! Redirigiendo...`;
+        this.successMsg.set(`¡Pedido ${order.orderNumber} creado! Redirigiendo...`);
         setTimeout(() => this.router.navigate(['/orders']), 2000);
       },
       error: err => {
-        this.errorMsg = err.error?.error ?? 'Error al procesar el pedido';
-        this.checkingOut = false;
+        this.errorMsg.set(err.error?.error ?? 'Error al procesar el pedido');
+        this.checkingOut.set(false);
       }
     });
   }

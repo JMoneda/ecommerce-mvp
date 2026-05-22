@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -28,9 +28,9 @@ import { CartService } from '../../../core/services/cart.service';
               <span class="error">Mínimo 6 caracteres</span>
             }
           </div>
-          @if (errorMsg) { <p class="error-msg">{{ errorMsg }}</p> }
-          <button type="submit" [disabled]="form.invalid || loading" class="btn-primary">
-            {{ loading ? 'Entrando...' : 'Entrar' }}
+          @if (errorMsg()) { <p class="error-msg">{{ errorMsg() }}</p> }
+          <button type="submit" [disabled]="form.invalid || loading()" class="btn-primary">
+            {{ loading() ? 'Entrando...' : 'Entrar' }}
           </button>
         </form>
         <p class="link">¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a></p>
@@ -64,13 +64,13 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  loading = false;
-  errorMsg = '';
+  loading = signal(false);
+  errorMsg = signal('');
 
   submit() {
     if (this.form.invalid) return;
-    this.loading = true;
-    this.errorMsg = '';
+    this.loading.set(true);
+    this.errorMsg.set('');
     const { email, password } = this.form.value;
     this.authService.login({ email: email!, password: password! }).subscribe({
       next: () => {
@@ -78,8 +78,8 @@ export class LoginComponent {
         this.router.navigate(['/catalog']);
       },
       error: err => {
-        this.errorMsg = err.error?.error ?? 'Error al iniciar sesión';
-        this.loading = false;
+        this.errorMsg.set(err.error?.error ?? 'Error al iniciar sesión');
+        this.loading.set(false);
       }
     });
   }

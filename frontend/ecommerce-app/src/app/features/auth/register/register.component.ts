@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -72,9 +72,9 @@ import { AuthService } from '../../../core/services/auth.service';
               <span class="error">Mínimo 6 caracteres</span>
             }
           </div>
-          @if (errorMsg) { <p class="error-msg">{{ errorMsg }}</p> }
-          <button type="submit" [disabled]="form.invalid || loading" class="btn-primary">
-            {{ loading ? 'Registrando...' : 'Registrarse' }}
+          @if (errorMsg()) { <p class="error-msg">{{ errorMsg() }}</p> }
+          <button type="submit" [disabled]="form.invalid || loading()" class="btn-primary">
+            {{ loading() ? 'Registrando...' : 'Registrarse' }}
           </button>
         </form>
         <p class="link">¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar Sesión</a></p>
@@ -119,18 +119,18 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  loading = false;
-  errorMsg = '';
+  loading = signal(false);
+  errorMsg = signal('');
 
   submit() {
     if (this.form.invalid) return;
-    this.loading = true;
-    this.errorMsg = '';
+    this.loading.set(true);
+    this.errorMsg.set('');
     this.authService.register(this.form.value as any).subscribe({
       next: () => this.router.navigate(['/catalog']),
       error: err => {
-        this.errorMsg = err.error?.error ?? 'Error al registrarse';
-        this.loading = false;
+        this.errorMsg.set(err.error?.error ?? 'Error al registrarse');
+        this.loading.set(false);
       }
     });
   }
