@@ -115,6 +115,8 @@ ecommerce-mvp/
 4. **Sin refresh tokens**: los tokens expiran en 8h. El usuario vuelve a autenticarse. Extensible sin cambios de arquitectura.
 5. **SQLite**: elegido por facilidad de instalación local. En producción se migra a PostgreSQL/SQL Server cambiando solo el provider de EF Core.
 6. **Un carrito por usuario**: si el usuario agrega el mismo producto dos veces, se incrementa la cantidad.
+7. **Monorepo (backend + frontend en un solo repositorio)**: se eligió un único repositorio con ambos proyectos en lugar de repositorios separados. Para un MVP de un solo equipo, donde los cambios suelen tocar backend y frontend a la vez, esto permite commits atómicos full-stack, centraliza la documentación (ADRs, diagramas) y simplifica la revisión y el clonado. A escala de múltiples equipos o despliegues independientes por servicio se migraría a repositorios separados (polyrepo); para este alcance, el monorepo es la opción óptima.
+8. **Login con email**: el requisito indica "login con usuario y contraseña". Se asume el email como identificador de usuario (es único y ya se solicita en el registro), evitando un campo `username` redundante.
 
 ## Extensibilidad
 
