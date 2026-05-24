@@ -1,1 +1,187 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===== Design Tokens — SportShop ===== */
+:root {
+  /* Color */
+  --c-bg: #fafafa;
+  --c-surface: #ffffff;
+  --c-ink: #0a0a0a;
+  --c-ink-soft: #404040;
+  --c-muted: #737373;
+  --c-border: #e5e5e5;
+  --c-border-strong: #0a0a0a;
+
+  --c-accent: #ff5a1f;
+  --c-accent-hover: #e04a12;
+  --c-accent-soft: #fff1ec;
+
+  --c-success: #15803d;
+  --c-success-soft: #dcfce7;
+  --c-warn: #b45309;
+  --c-warn-soft: #fef3c7;
+  --c-info: #1d4ed8;
+  --c-info-soft: #dbeafe;
+  --c-danger: #b91c1c;
+  --c-danger-soft: #fee2e2;
+
+  /* Spacing scale (4px base) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* Radius */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+
+  /* Shadow */
+  --sh-1: 0 1px 2px rgba(0,0,0,.04);
+  --sh-2: 0 4px 14px rgba(0,0,0,.08);
+  --sh-3: 0 12px 32px rgba(0,0,0,.12);
+
+  /* Type */
+  --f-display: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --f-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+h1, h2, h3, h4 {
+  font-family: var(--f-display);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+h1 { font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem); font-weight: 800; }
+h2 { font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); font-weight: 800; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p  { margin: 0; }
+a  { color: inherit; }
+img { display: block; max-width: 100%; }
+button { font-family: inherit; }
+
+/* ===== Form base ===== */
+.input, input.input, select.input, textarea.input,
+.field input, .field select, .field textarea {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  color: var(--c-ink);
+  font: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field textarea { height: auto; padding: 12px 14px; min-height: 88px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus,
+.input:focus { outline: none; border-color: var(--c-ink); box-shadow: 0 0 0 3px rgba(10,10,10,.08); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: .82rem; font-weight: 600; color: var(--c-ink-soft); text-transform: uppercase; letter-spacing: .04em; }
+.field .hint { font-size: .8rem; color: var(--c-muted); }
+.field .err  { font-size: .8rem; color: var(--c-danger); font-weight: 500; }
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 20px;
+  border: 1px solid transparent; border-radius: var(--r-md);
+  font-weight: 600; font-size: .95rem;
+  cursor: pointer; transition: transform .05s, background .15s, border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-primary { background: var(--c-ink); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--c-accent); }
+
+.btn-accent { background: var(--c-accent); color: #fff; }
+.btn-accent:hover:not(:disabled) { background: var(--c-accent-hover); }
+
+.btn-ghost { background: transparent; color: var(--c-ink); border-color: var(--c-border); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--c-ink); }
+
+.btn-danger { background: var(--c-danger); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #8a1414; }
+
+.btn-block { width: 100%; }
+.btn-sm { height: 36px; padding: 0 14px; font-size: .85rem; }
+.btn-lg { height: 52px; padding: 0 28px; font-size: 1rem; }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  font-size: .75rem; font-weight: 600; letter-spacing: .02em;
+  background: var(--c-border); color: var(--c-ink-soft);
+}
+.badge-success { background: var(--c-success-soft); color: var(--c-success); }
+.badge-warn    { background: var(--c-warn-soft);    color: var(--c-warn); }
+.badge-info    { background: var(--c-info-soft);    color: var(--c-info); }
+.badge-danger  { background: var(--c-danger-soft);  color: var(--c-danger); }
+
+/* ===== Card ===== */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+
+/* ===== Alerts ===== */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  font-size: .9rem;
+  border: 1px solid transparent;
+}
+.alert-error   { background: var(--c-danger-soft);  color: var(--c-danger);  border-color: #fecaca; }
+.alert-success { background: var(--c-success-soft); color: var(--c-success); border-color: #bbf7d0; }
+.alert-info    { background: var(--c-info-soft);    color: var(--c-info);    border-color: #bfdbfe; }
+
+/* ===== Page container ===== */
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--s-5); }
+.container-narrow { max-width: 720px; }
+.section { padding: var(--s-7) 0; }
+
+/* ===== Table ===== */
+.table {
+  width: 100%;
+  border-collapse: separate; border-spacing: 0;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.table th, .table td { padding: 14px 16px; text-align: left; font-size: .92rem; }
+.table thead th {
+  background: #fafafa;
+  font-size: .75rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--c-muted); font-weight: 700;
+  border-bottom: 1px solid var(--c-border);
+}
+.table tbody td { border-bottom: 1px solid var(--c-border); color: var(--c-ink-soft); }
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: #fafafa; }
+
+/* ===== Helpers ===== */
+.muted { color: var(--c-muted); }
+.strong { font-weight: 700; color: var(--c-ink); }
+.row { display: flex; gap: var(--s-4); flex-wrap: wrap; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; }
+.stack { display: flex; flex-direction: column; gap: var(--s-4); }
+.stack-sm { display: flex; flex-direction: column; gap: var(--s-2); }
