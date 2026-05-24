@@ -9,8 +9,9 @@ Sistema de e-commerce para venta de tenis deportivos. Desarrollado como prueba t
 | Backend | .NET 10, ASP.NET Core, Clean Architecture + CQRS |
 | ORM | Entity Framework Core 10 + SQLite |
 | Auth | ASP.NET Core Identity + JWT |
+| Logging | Serilog (Console + File rotado por día) |
 | Frontend | Angular 21 (standalone components, signals) |
-| Tests | xUnit + Moq (backend), Angular Testing (frontend) |
+| Tests | xUnit + Moq (backend), Vitest + Angular Testing (frontend) |
 
 ## Requisitos Previos
 
@@ -89,22 +90,25 @@ ecommerce-mvp/
 ## Buenas Prácticas Aplicadas
 
 ### Backend
-- **Clean Architecture**: separación estricta por capas con dependencias unidireccionales
+- **Clean Architecture**: separación estricta por capas con dependencias unidireccionales (Domain ← Application ← Infrastructure / API)
 - **CQRS + MediatR**: cada caso de uso es un Command/Query + Handler aislado
 - **Repository Pattern + Unit of Work**: abstracción de persistencia
-- **Factory Pattern**: entidades con constructores privados y métodos estáticos `Create()`
-- **Guard Clauses**: validaciones al inicio de métodos de dominio
-- **Global Exception Middleware**: manejo centralizado de errores
+- **Factory Method**: entidades con constructores privados y métodos estáticos `Create()` que enforce invariantes
+- **Result Pattern**: errores de negocio esperados se devuelven como `Result<T>`, no como excepciones
+- **Global Exception Middleware**: manejo centralizado de errores con TraceId para soporte
+- **Serilog logging estructurado**: sinks Console + File rotado por día, configuración declarativa en `appsettings.json`
 - **Conventional Commits**: historial de Git semántico
-- **SOLID**: Single Responsibility en cada handler, Open/Closed para extensión de pagos/auth
+- **SOLID**: los 5 principios mapeados archivo:línea en [docs/design-decisions.md](docs/design-decisions.md)
 
 ### Frontend
 - **Standalone Components**: sin NgModules, más simple y tree-shakable
-- **Signals**: estado reactivo con `signal()` y `computed()` para auth y carrito
-- **Reactive Forms**: todos los formularios usan `FormBuilder` + validaciones
+- **Templates y estilos separados** (`.html` + `.scss` + `.ts`): componentes mantenibles, no monolitos
+- **Design Tokens**: sistema de variables CSS centralizado en [styles.scss](frontend/ecommerce-app/src/styles.scss) (colores, spacing, radius, tipografía)
+- **Signals + Observables**: estado reactivo síncrono + HTTP async
+- **Reactive Forms exclusivos**: cero `ngModel`; `FormBuilder`, `FormGroup`, `FormRecord` con validaciones
 - **Lazy Loading**: cada feature se carga bajo demanda con `loadComponent`
-- **Functional Guards**: `authGuard`, `adminGuard`, `guestGuard` como funciones puras
-- **HTTP Interceptor funcional**: adjunta JWT a cada request autenticada
+- **Functional Guards e Interceptors**: patrón moderno de Angular 20+
+- **Responsive mobile-first**: breakpoints consistentes (880/720/520px)
 - **Feature-based structure**: organización por dominio, no por tipo de archivo
 
 ## Supuestos y Consideraciones
@@ -128,6 +132,7 @@ ecommerce-mvp/
 
 | Documento | Descripción |
 |-----------|-------------|
+| [Decisiones de diseño](docs/design-decisions.md) | **SOLID y patrones mapeados archivo:línea** — para sustentación |
 | [Diagrama de arquitectura](docs/architecture.md) | Vista general del sistema, capas y flujo de peticiones |
 | [Modelo entidad-relación](docs/entity-relationship.md) | Diagrama ER, tablas, PK/FK y decisiones de modelado |
 | [Colección Postman](docs/ECommerce.postman_collection.json) | Pruebas de la API (importar en Postman) |
@@ -137,6 +142,7 @@ ecommerce-mvp/
 - [ADR-001: Manejo del carrito](docs/adrs/ADR-001-cart-state.md)
 - [ADR-002: Arquitectura del backend](docs/adrs/ADR-002-backend-architecture.md)
 - [ADR-003: Estrategia de autenticación](docs/adrs/ADR-003-auth-jwt.md)
+- [ADR-004: Logging estructurado con Serilog](docs/adrs/ADR-004-logging.md)
 
 ### Uso de la colección Postman
 
