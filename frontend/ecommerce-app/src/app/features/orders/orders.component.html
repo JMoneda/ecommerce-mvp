@@ -1,0 +1,57 @@
+<div class="container section">
+  <header class="page-head">
+    <h1>Mis pedidos</h1>
+    <p class="muted">Historial completo de tus compras.</p>
+  </header>
+
+  @if (loading()) {
+    <div class="state"><div class="spinner"></div><p>Cargando…</p></div>
+  } @else if (orders().length === 0) {
+    <div class="empty-card">
+      <div class="empty-emoji">📦</div>
+      <h3>Aún no tienes pedidos</h3>
+      <p class="muted">Cuando hagas tu primera compra aparecerá aquí.</p>
+      <a routerLink="/catalog" class="btn btn-accent" style="margin-top: 12px;">Ir al catálogo</a>
+    </div>
+  } @else {
+    <div class="orders">
+      @for (order of orders(); track order.id) {
+        <article class="order">
+          <header class="order-head">
+            <div class="head-left">
+              <span class="order-num">{{ order.orderNumber }}</span>
+              <span class="muted small">{{ order.createdAt | date:'longDate' }}</span>
+            </div>
+            <span class="badge" [class]="badgeClass(order.status)">
+              {{ statusIcon(order.status) }} {{ statusLabel(order.status) }}
+            </span>
+          </header>
+
+          <div class="timeline">
+            @for (step of steps; track step) {
+              <div class="step" [class.done]="stepDone(order.status, step)" [class.current]="stepCurrent(order.status, step)">
+                <div class="step-dot"></div>
+                <span class="step-label">{{ statusLabel(step) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="order-items">
+            @for (item of order.items; track item.productId) {
+              <div class="item-row">
+                <span class="item-name">{{ item.productName }}</span>
+                <span class="muted">× {{ item.quantity }}</span>
+                <span class="item-sub">{{ item.subtotal | currency:'COP':'symbol':'1.0-0' }}</span>
+              </div>
+            }
+          </div>
+
+          <footer class="order-foot">
+            <span class="muted">Total</span>
+            <strong>{{ order.total | currency:'COP':'symbol':'1.0-0' }}</strong>
+          </footer>
+        </article>
+      }
+    </div>
+  }
+</div>

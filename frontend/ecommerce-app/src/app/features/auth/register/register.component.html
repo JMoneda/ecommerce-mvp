@@ -1,0 +1,94 @@
+<div class="auth-page">
+  <aside class="auth-art">
+    <div class="art-inner">
+      <span class="art-mark">▲</span>
+      <h2 class="art-title">Crea tu cuenta.</h2>
+      <p class="art-lead">Compra tenis de las mejores marcas con pago contra entrega. Sin tarjetas, sin trámites.</p>
+      <ul class="art-points">
+        <li>✓ Envío nacional</li>
+        <li>✓ Pago al recibir</li>
+        <li>✓ Cambios y devoluciones</li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="auth-form-wrap">
+    <div class="auth-form">
+      <a routerLink="/catalog" class="back-link">← Volver al catálogo</a>
+      <h1>Crear cuenta</h1>
+      <p class="muted" style="margin-bottom: var(--s-5);">Completa tus datos para empezar a comprar.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="stack">
+        <div class="section-title">Información personal</div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Nombres</label>
+            <input formControlName="firstName" placeholder="Juan">
+            @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) { <span class="err">Requerido</span> }
+          </div>
+          <div class="field">
+            <label>Apellidos</label>
+            <input formControlName="lastName" placeholder="García">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Edad</label>
+            <input type="number" formControlName="age" placeholder="25">
+          </div>
+          <div class="field">
+            <label>Fecha de nacimiento</label>
+            <input type="date" formControlName="dateOfBirth">
+          </div>
+        </div>
+
+        <div class="section-title">Ubicación</div>
+        <div class="grid-3">
+          <div class="field">
+            <label>País</label>
+            <input formControlName="country" placeholder="Colombia">
+          </div>
+          <div class="field">
+            <label>Departamento</label>
+            <input formControlName="state" placeholder="Antioquia">
+          </div>
+          <div class="field">
+            <label>Ciudad</label>
+            <input formControlName="city" placeholder="Medellín">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Celular</label>
+            <input type="tel" formControlName="phone" placeholder="3001234567">
+          </div>
+          <div class="field">
+            <label>Dirección</label>
+            <input formControlName="address" placeholder="Calle 1 # 1-1">
+          </div>
+        </div>
+
+        <div class="section-title">Acceso</div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
+          @if (form.get('email')?.invalid && form.get('email')?.touched) { <span class="err">Email válido requerido</span> }
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+          <span class="hint">Debe incluir mayúsculas, minúsculas y al menos un dígito.</span>
+          @if (form.get('password')?.invalid && form.get('password')?.touched) { <span class="err">Mínimo 6 caracteres</span> }
+        </div>
+
+        @if (errorMsg()) { <div class="alert alert-error">{{ errorMsg() }}</div> }
+
+        <button type="submit" [disabled]="form.invalid || loading()" class="btn btn-accent btn-lg btn-block">
+          {{ loading() ? 'Registrando…' : 'Crear cuenta' }}
+        </button>
+      </form>
+
+      <p class="link-row">¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></p>
+    </div>
+  </main>
+</div>

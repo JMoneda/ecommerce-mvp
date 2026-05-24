@@ -1,0 +1,70 @@
+<div class="container section">
+  <header class="page-head">
+    <h1>Mi carrito</h1>
+    <p class="muted">{{ cartService.itemCount() }} {{ cartService.itemCount() === 1 ? 'producto' : 'productos' }}</p>
+  </header>
+
+  @if (cartService.cart()?.items?.length === 0 || !cartService.cart()) {
+    <div class="empty-card">
+      <div class="empty-emoji">🛒</div>
+      <h3>Tu carrito está vacío</h3>
+      <p class="muted">Explora el catálogo y encuentra tus próximos tenis.</p>
+      <a routerLink="/catalog" class="btn btn-accent" style="margin-top: 12px;">Ver catálogo</a>
+    </div>
+  } @else {
+    <div class="layout">
+      <div class="items">
+        @for (item of cartService.cart()!.items; track item.id) {
+          <article class="line">
+            <div class="thumb">
+              <img [src]="item.imageUrl" [alt]="item.productName"
+                   onerror="this.onerror=null;this.src='/placeholder.svg'">
+            </div>
+            <div class="line-info">
+              <h3 class="line-name">{{ item.productName }}</h3>
+              <p class="muted line-unit">{{ item.unitPrice | currency:'COP':'symbol':'1.0-0' }} c/u</p>
+            </div>
+            <div class="line-qty">
+              <div class="qty-control">
+                <button class="qty-btn" (click)="updateQty(item.productId, item.quantity - 1)" [disabled]="item.quantity <= 1">−</button>
+                <span class="qty-num">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="updateQty(item.productId, item.quantity + 1)">+</button>
+              </div>
+            </div>
+            <div class="line-subtotal">
+              <span class="muted small">Subtotal</span>
+              <strong>{{ item.subtotal | currency:'COP':'symbol':'1.0-0' }}</strong>
+            </div>
+            <button (click)="removeItem(item.productId)" class="btn-remove" title="Eliminar">✕</button>
+          </article>
+        }
+      </div>
+
+      <aside class="summary card">
+        <h3>Resumen</h3>
+        <div class="sum-row">
+          <span class="muted">Subtotal</span>
+          <span>{{ cartService.total() | currency:'COP':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="sum-row">
+          <span class="muted">Envío</span>
+          <span class="badge badge-success">Gratis</span>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-total">
+          <span>Total</span>
+          <strong>{{ cartService.total() | currency:'COP':'symbol':'1.0-0' }}</strong>
+        </div>
+        <div class="payment-note">
+          <span>🚚</span> Pago contra entrega
+        </div>
+        <button (click)="checkout()" class="btn btn-accent btn-block btn-lg" [disabled]="checkingOut()">
+          {{ checkingOut() ? 'Procesando…' : 'Finalizar compra' }}
+        </button>
+        <a routerLink="/catalog" class="btn btn-ghost btn-block" style="margin-top: 8px;">Seguir comprando</a>
+        @if (successMsg()) { <div class="alert alert-success" style="margin-top:12px;">✓ {{ successMsg() }}</div> }
+        @if (errorMsg()) { <div class="alert alert-error" style="margin-top:12px;">{{ errorMsg() }}</div> }
+      </aside>
+    </div>
+  }
+</div>

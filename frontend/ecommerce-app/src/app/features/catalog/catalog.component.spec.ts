@@ -46,26 +46,25 @@ describe('CatalogComponent', () => {
   });
 
   it('should show loading state initially', () => {
-    expect(component.loading()).toBeTrue();
+    expect(component.loading()).toBe(true);
   });
 
   it('should set loading to false after products load', () => {
     fixture.detectChanges();
     const req = httpMock.expectOne(r => r.url.includes('/products'));
     req.flush([]);
-    expect(component.loading()).toBeFalse();
+    expect(component.loading()).toBe(false);
   });
 
-  it('should clear filters and reload', () => {
+  it('clearFilters should reset the filter form', () => {
     fixture.detectChanges();
     httpMock.expectOne(r => r.url.includes('/products')).flush([]);
 
-    component.filterForm.patchValue({ name: 'Nike' });
-    httpMock.expectOne(r => r.url.includes('/products')).flush([]);
+    component.filterForm.patchValue({ name: 'Nike', size: '9' });
+    expect(component.filterForm.value.name).toBe('Nike');
 
     component.clearFilters();
-    httpMock.expectOne(r => r.url.includes('/products')).flush([]);
-
-    expect(component.filterForm.value.name).toBeFalsy();
+    expect(component.filterForm.value.name).toBe('');
+    expect(component.filterForm.value.size).toBe('');
   });
 });

@@ -1,0 +1,104 @@
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow">Colección 2026</span>
+      <h1>Tenis para<br><span class="accent">cada paso.</span></h1>
+      <p class="lead">10 modelos seleccionados de las mejores marcas. Pago contra entrega en toda Colombia.</p>
+      <a href="#catalogo" class="btn btn-accent btn-lg">Explorar catálogo →</a>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-circle"></div>
+      <div class="hero-badge">10<small>modelos</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section id="catalogo" class="container section">
+  <div class="row-between" style="margin-bottom: var(--s-5);">
+    <div>
+      <h2>Catálogo</h2>
+      <p class="muted" style="margin-top:6px;">{{ products().length }} {{ products().length === 1 ? 'producto' : 'productos' }} disponibles</p>
+    </div>
+    @if (hasFilters()) {
+      <button type="button" (click)="clearFilters()" class="btn btn-ghost btn-sm">Limpiar filtros</button>
+    }
+  </div>
+
+  <!-- Filtros -->
+  <form [formGroup]="filterForm" class="filters card">
+    <div class="filter-search">
+      <span class="search-icon">🔍</span>
+      <input class="input" formControlName="name" placeholder="Buscar por nombre…">
+    </div>
+    <input class="input" formControlName="description" placeholder="Descripción">
+    <input class="input" formControlName="code" placeholder="Código (ej. TNS-001)">
+    <select class="input" formControlName="size">
+      <option value="">Todas las tallas</option>
+      <option value="7">Talla 7</option>
+      <option value="8">Talla 8</option>
+      <option value="9">Talla 9</option>
+      <option value="10">Talla 10</option>
+    </select>
+    <select class="input" formControlName="color">
+      <option value="">Todos los colores</option>
+      <option value="White">Blanco</option>
+      <option value="Black">Negro</option>
+      <option value="Gray">Gris</option>
+    </select>
+  </form>
+
+  @if (loading()) {
+    <div class="state-card">
+      <div class="spinner"></div>
+      <p>Cargando productos…</p>
+    </div>
+  } @else if (products().length === 0) {
+    <div class="state-card">
+      <div class="state-emoji">👟</div>
+      <h3>Sin resultados</h3>
+      <p class="muted">Prueba quitando algún filtro o buscando otro modelo.</p>
+    </div>
+  } @else {
+    <div class="grid" [formGroup]="quantityForm">
+      @for (product of products(); track product.id) {
+        <article class="product-card">
+          <a [routerLink]="['/product', product.id]" class="card-link">
+            <div class="thumb">
+              @if (!product.isAvailable) { <span class="badge badge-danger thumb-badge">Agotado</span> }
+              <img [src]="product.imageUrl" [alt]="product.name"
+                   onerror="this.onerror=null;this.src='/placeholder.svg'">
+            </div>
+            <div class="product-meta">
+              <span class="code">{{ product.code }}</span>
+              <h3 class="product-name">{{ product.name }}</h3>
+              <div class="chips">
+                <span class="chip">Talla {{ product.size }}</span>
+                <span class="chip">
+                  <span class="dot" [style.background]="colorHex(product.color)"></span>
+                  {{ colorLabel(product.color) }}
+                </span>
+              </div>
+              <div class="price-row">
+                <span class="price">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </a>
+          @if (product.isAvailable && auth.isAuthenticated()) {
+            <div class="qty-row">
+              <div class="qty-control">
+                <button type="button" class="qty-btn" (click)="dec(product)">−</button>
+                <input type="number" [formControlName]="product.id" min="1" [max]="product.stock">
+                <button type="button" class="qty-btn" (click)="inc(product)">+</button>
+              </div>
+              <button (click)="addToCart(product)" class="btn btn-primary btn-block">Agregar</button>
+            </div>
+          } @else if (!auth.isAuthenticated() && product.isAvailable) {
+            <a routerLink="/auth/login" class="btn btn-ghost btn-block btn-sm">Inicia sesión para comprar</a>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

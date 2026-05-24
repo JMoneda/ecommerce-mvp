@@ -1,0 +1,43 @@
+.auth-page { display: grid; grid-template-columns: 1fr 1.2fr; min-height: calc(100vh - 64px); }
+.auth-art {
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  padding: var(--s-7); position: sticky; top: 64px; height: calc(100vh - 64px);
+  overflow: hidden;
+}
+.auth-art::before {
+  content: ''; position: absolute; left: -100px; bottom: -100px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,90,31,.3), transparent 60%);
+  filter: blur(20px);
+}
+.art-inner { max-width: 380px; position: relative; }
+.art-mark { font-size: 2.5rem; color: var(--c-accent); display: inline-block; transform: rotate(-12deg); margin-bottom: var(--s-4); }
+.art-title { font-size: 2.25rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: var(--s-4); }
+.art-lead { color: #d4d4d4; line-height: 1.6; margin-bottom: var(--s-5); }
+.art-points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.art-points li { color: #fff; font-weight: 500; }
+
+.auth-form-wrap { display: flex; justify-content: center; padding: var(--s-7) var(--s-5); }
+.auth-form { width: 100%; max-width: 560px; }
+.back-link { display: inline-block; color: var(--c-muted); text-decoration: none; font-size: .85rem; margin-bottom: var(--s-5); }
+.back-link:hover { color: var(--c-ink); }
+h1 { font-size: 2rem; margin-bottom: var(--s-2); }
+
+.section-title {
+  font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--c-muted); margin-top: var(--s-3);
+  padding-bottom: 8px; border-bottom: 1px solid var(--c-border);
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-3); }
+
+.link-row { text-align: center; margin-top: var(--s-5); color: var(--c-ink-soft); font-size: .92rem; }
+.link-row a { color: var(--c-accent); font-weight: 700; text-decoration: none; }
+.link-row a:hover { text-decoration: underline; }
+
+@media (max-width: 880px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-art { display: none; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}

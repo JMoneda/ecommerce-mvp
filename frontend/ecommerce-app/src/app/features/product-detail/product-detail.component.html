@@ -1,0 +1,86 @@
+<div class="container section">
+  @if (loading()) {
+    <div class="state">
+      <div class="spinner"></div>
+      <p>Cargando…</p>
+    </div>
+  } @else if (product()) {
+    <nav class="breadcrumb">
+      <a routerLink="/catalog">Catálogo</a>
+      <span>›</span>
+      <span class="current">{{ product()!.name }}</span>
+    </nav>
+
+    <div class="detail">
+      <div class="gallery">
+        <div class="hero-img">
+          <img [src]="product()!.imageUrl" [alt]="product()!.name"
+               onerror="this.onerror=null;this.src='/placeholder.svg'">
+          @if (!product()!.isAvailable) {
+            <span class="badge badge-danger sold-tag">Agotado</span>
+          }
+        </div>
+      </div>
+
+      <div class="info">
+        <span class="code">{{ product()!.code }}</span>
+        <h1>{{ product()!.name }}</h1>
+        <div class="price">{{ product()!.price | currency:'COP':'symbol':'1.0-0' }}</div>
+
+        <p class="description">{{ product()!.description }}</p>
+
+        <div class="specs">
+          <div class="spec">
+            <span class="spec-label">Talla</span>
+            <span class="spec-value">{{ product()!.size }}</span>
+          </div>
+          <div class="spec">
+            <span class="spec-label">Color</span>
+            <span class="spec-value">
+              <span class="dot" [style.background]="colorHex(product()!.color)"></span>
+              {{ colorLabel(product()!.color) }}
+            </span>
+          </div>
+          <div class="spec">
+            <span class="spec-label">Disponibilidad</span>
+            <span class="spec-value">
+              @if (product()!.isAvailable) {
+                <span class="badge badge-success">{{ product()!.stock }} en stock</span>
+              } @else {
+                <span class="badge badge-danger">Agotado</span>
+              }
+            </span>
+          </div>
+        </div>
+
+        @if (product()!.isAvailable && auth.isAuthenticated()) {
+          <div class="actions">
+            <div class="qty-control">
+              <button type="button" class="qty-btn" (click)="dec()">−</button>
+              <input type="number" [formControl]="quantityControl" min="1" [max]="product()!.stock">
+              <button type="button" class="qty-btn" (click)="inc()">+</button>
+            </div>
+            <button (click)="addToCart()" class="btn btn-accent btn-lg" [disabled]="adding()">
+              {{ adding() ? 'Agregando…' : '🛒  Agregar al carrito' }}
+            </button>
+          </div>
+        } @else if (!auth.isAuthenticated()) {
+          <a routerLink="/auth/login" class="btn btn-primary btn-lg btn-block">Inicia sesión para comprar</a>
+        }
+        @if (successMsg()) { <div class="alert alert-success" style="margin-top:16px;">✓ {{ successMsg() }}</div> }
+
+        <div class="trust">
+          <div class="trust-item"><span>🚚</span> Pago contra entrega</div>
+          <div class="trust-item"><span>↩️</span> Cambios y devoluciones</div>
+          <div class="trust-item"><span>🇨🇴</span> Envío nacional</div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="state">
+      <div class="state-emoji">😕</div>
+      <h3>Producto no encontrado</h3>
+      <a routerLink="/catalog" class="btn btn-ghost" style="margin-top:12px;">Volver al catálogo</a>
+    </div>
+  }
+</div>

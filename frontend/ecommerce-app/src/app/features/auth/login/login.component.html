@@ -1,0 +1,43 @@
+<div class="auth-page">
+  <aside class="auth-art">
+    <div class="art-inner">
+      <span class="art-mark">▲</span>
+      <h2 class="art-title">Bienvenido de vuelta.</h2>
+      <p class="art-lead">Inicia sesión para ver tu carrito, tus pedidos y aprovechar el pago contra entrega.</p>
+    </div>
+  </aside>
+
+  <main class="auth-form-wrap">
+    <div class="auth-form">
+      <a routerLink="/catalog" class="back-link">← Volver al catálogo</a>
+      <h1>Iniciar sesión</h1>
+      <p class="muted" style="margin-bottom: var(--s-5);">Ingresa con tu correo electrónico.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="stack">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="correo@ejemplo.com" autocomplete="email">
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <span class="err">Ingresa un email válido</span>
+          }
+        </div>
+
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" formControlName="password" placeholder="••••••••" autocomplete="current-password">
+          @if (form.get('password')?.invalid && form.get('password')?.touched) {
+            <span class="err">Mínimo 6 caracteres</span>
+          }
+        </div>
+
+        @if (errorMsg()) { <div class="alert alert-error">{{ errorMsg() }}</div> }
+
+        <button type="submit" [disabled]="form.invalid || loading()" class="btn btn-accent btn-lg btn-block">
+          {{ loading() ? 'Entrando…' : 'Entrar' }}
+        </button>
+      </form>
+
+      <p class="link-row">¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a></p>
+    </div>
+  </main>
+</div>

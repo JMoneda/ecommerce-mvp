@@ -1,0 +1,66 @@
+<div class="container section">
+  <header class="admin-head">
+    <div>
+      <span class="eyebrow">Panel admin</span>
+      <h1>Órdenes</h1>
+    </div>
+    <select [formControl]="statusFilter" class="input filter-select">
+      <option value="">Todos los estados</option>
+      <option value="InProcess">En proceso</option>
+      <option value="Paid">Pagado</option>
+      <option value="Shipped">Enviado</option>
+      <option value="Delivered">Entregado</option>
+    </select>
+  </header>
+
+  <nav class="tabs">
+    <a routerLink="/admin/products" routerLinkActive="active">Productos</a>
+    <a routerLink="/admin/orders" routerLinkActive="active">Órdenes</a>
+  </nav>
+
+  @if (loading()) {
+    <div class="state"><div class="spinner"></div><p>Cargando…</p></div>
+  } @else if (orders().length === 0) {
+    <div class="empty-card">
+      <div class="empty-emoji">📋</div>
+      <h3>No hay órdenes</h3>
+      <p class="muted">{{ statusFilter.value ? 'Prueba con otro estado.' : 'Aparecerán aquí cuando los clientes compren.' }}</p>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table" [formGroup]="statusForm">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th class="actions-col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td><code class="code-cell">{{ order.orderNumber }}</code></td>
+              <td class="strong">{{ order.customerName ?? '-' }}</td>
+              <td class="strong">{{ order.total | currency:'COP':'symbol':'1.0-0' }}</td>
+              <td>
+                <select [formControlName]="order.id" class="status-select" [class]="'sel-' + order.status.toLowerCase()">
+                  <option value="InProcess">⏳ En proceso</option>
+                  <option value="Paid">💵 Pagado</option>
+                  <option value="Shipped">🚚 Enviado</option>
+                  <option value="Delivered">✓ Entregado</option>
+                </select>
+              </td>
+              <td>{{ order.createdAt | date:'dd MMM yyyy' }}</td>
+              <td class="actions-col">
+                <button (click)="delete(order.id)" class="btn-icon-danger" title="Eliminar">🗑</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

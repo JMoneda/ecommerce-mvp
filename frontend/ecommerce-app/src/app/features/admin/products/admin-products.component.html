@@ -1,0 +1,118 @@
+<div class="container section">
+  <header class="admin-head">
+    <div>
+      <span class="eyebrow">Panel admin</span>
+      <h1>Productos</h1>
+    </div>
+    <button (click)="openForm()" class="btn btn-accent">+ Nuevo producto</button>
+  </header>
+
+  <nav class="tabs">
+    <a routerLink="/admin/products" routerLinkActive="active">Productos</a>
+    <a routerLink="/admin/orders" routerLinkActive="active">Órdenes</a>
+  </nav>
+
+  @if (showForm()) {
+    <div class="card form-panel">
+      <div class="form-head">
+        <h3>{{ editingId() ? 'Editar producto' : 'Nuevo producto' }}</h3>
+        <button type="button" (click)="closeForm()" class="icon-btn">✕</button>
+      </div>
+      <form [formGroup]="productForm" (ngSubmit)="save()" class="stack">
+        <div class="grid-2">
+          @if (!editingId()) {
+            <div class="field">
+              <label>Código</label>
+              <input formControlName="code" placeholder="TNS-011">
+            </div>
+          }
+          <div class="field" [class.full]="editingId()">
+            <label>Nombre</label>
+            <input formControlName="name" placeholder="Nike Air Max">
+          </div>
+        </div>
+        <div class="field">
+          <label>Descripción</label>
+          <input formControlName="description">
+        </div>
+        <div class="field">
+          <label>URL imagen</label>
+          <input formControlName="imageUrl" placeholder="/placeholder.svg">
+        </div>
+        <div class="grid-4">
+          <div class="field">
+            <label>Talla</label>
+            <select formControlName="size">
+              <option [value]="7">7</option>
+              <option [value]="8">8</option>
+              <option [value]="9">9</option>
+              <option [value]="10">10</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Color</label>
+            <select formControlName="color">
+              <option value="White">Blanco</option>
+              <option value="Black">Negro</option>
+              <option value="Gray">Gris</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Precio</label>
+            <input type="number" formControlName="price">
+          </div>
+          <div class="field">
+            <label>Stock</label>
+            <input type="number" formControlName="stock">
+          </div>
+        </div>
+        @if (errorMsg()) { <div class="alert alert-error">{{ errorMsg() }}</div> }
+        <div class="form-actions">
+          <button type="button" (click)="closeForm()" class="btn btn-ghost">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Guardar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Talla</th>
+          <th>Color</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th class="actions-col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of products(); track p.id) {
+          <tr>
+            <td><code class="code-cell">{{ p.code }}</code></td>
+            <td class="strong">{{ p.name }}</td>
+            <td>{{ p.size }}</td>
+            <td>
+              <span class="color-cell">
+                <span class="dot" [style.background]="colorHex(p.color)"></span>
+                {{ colorLabel(p.color) }}
+              </span>
+            </td>
+            <td class="strong">{{ p.price | currency:'COP':'symbol':'1.0-0' }}</td>
+            <td>
+              @if (p.stock === 0) { <span class="badge badge-danger">Agotado</span> }
+              @else if (p.stock < 5) { <span class="badge badge-warn">{{ p.stock }} bajo</span> }
+              @else { <span class="badge badge-success">{{ p.stock }}</span> }
+            </td>
+            <td class="actions-col">
+              <button (click)="edit(p)" class="btn btn-ghost btn-sm">Editar</button>
+              <button (click)="delete(p.id)" class="btn-icon-danger" title="Eliminar">🗑</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<header class="nav-wrap">
+  <nav class="nav container">
+    <a routerLink="/catalog" class="brand">
+      <span class="brand-mark">▲</span>
+      <span class="brand-name">SPORT<span class="accent">SHOP</span></span>
+    </a>
+
+    <button class="burger" (click)="toggle()" [attr.aria-expanded]="open()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="links" [class.open]="open()">
+      <a routerLink="/catalog" routerLinkActive="active" (click)="close()">Catálogo</a>
+
+      @if (auth.isAuthenticated()) {
+        <a routerLink="/orders" routerLinkActive="active" (click)="close()">Mis pedidos</a>
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="active" (click)="close()">Admin</a>
+        }
+        <a routerLink="/cart" routerLinkActive="active" class="cart-link" (click)="close()">
+          <span class="cart-icon">🛒</span>
+          <span>Carrito</span>
+          @if (cart.itemCount() > 0) { <span class="cart-badge">{{ cart.itemCount() }}</span> }
+        </a>
+        <div class="user-chip" (click)="auth.logout()" title="Cerrar sesión">
+          <span class="avatar">{{ initials() }}</span>
+          <span class="user-name">{{ auth.user()?.fullName }}</span>
+          <span class="logout-icon">↩</span>
+        </div>
+      } @else {
+        <a routerLink="/auth/login" routerLinkActive="active" class="link-plain" (click)="close()">Iniciar sesión</a>
+        <a routerLink="/auth/register" routerLinkActive="active" class="btn btn-accent btn-sm" (click)="close()">Crear cuenta</a>
+      }
+    </div>
+  </nav>
+</header>
