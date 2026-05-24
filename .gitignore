@@ -7,6 +7,8 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+logs/
+*.log
 
 # Angular
 node_modules/
@@ -17,3 +19,7 @@ dist/
 # Environment
 appsettings.Development.json
 .env
+.github/*
+.claude/*
+backend/.github/copilot-instructions.md
+frontend/ecommerce-app/.claude/settings.local.json

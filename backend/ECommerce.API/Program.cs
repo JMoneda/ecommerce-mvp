@@ -8,8 +8,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog: configuración leída de appsettings (sinks, niveles, enrichers).
+// Reemplaza al logger por defecto de ASP.NET y reescribe a Console + archivo rotado por día.
+builder.Host.UseSerilog((ctx, services, cfg) => cfg
+    .ReadFrom.Configuration(ctx.Configuration)
+    .ReadFrom.Services(services));
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -68,6 +75,9 @@ builder.Services.AddCors(opt =>
               .AllowAnyMethod()));
 
 var app = builder.Build();
+
+// Log estructurado por cada request (método, ruta, status, duración).
+app.UseSerilogRequestLogging();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

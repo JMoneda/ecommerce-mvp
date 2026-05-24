@@ -3,6 +3,10 @@ using System.Text.Json;
 
 namespace ECommerce.API.Middleware;
 
+/// <summary>
+/// Captura toda excepción no manejada y la transforma en una respuesta JSON consistente.
+/// Loguea con propiedades estructuradas (Path, Method, TraceId) para facilitar diagnóstico.
+/// </summary>
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -19,7 +23,10 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception");
+            _logger.LogError(ex,
+                "Unhandled exception {ExceptionType} on {Method} {Path} (TraceId={TraceId})",
+                ex.GetType().Name, ctx.Request.Method, ctx.Request.Path, ctx.TraceIdentifier);
+
             await HandleExceptionAsync(ctx, ex);
         }
     }
@@ -34,7 +41,12 @@ public class ExceptionMiddleware
             _ => (int)HttpStatusCode.InternalServerError
         };
 
-        var response = new { error = ex.Message, statusCode = ctx.Response.StatusCode };
+        var response = new
+        {
+            error = ex.Message,
+            statusCode = ctx.Response.StatusCode,
+            traceId = ctx.TraceIdentifier
+        };
         return ctx.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
 }
