@@ -55,22 +55,18 @@ public static class DatabaseSeeder
     {
         if (await ctx.Products.AnyAsync()) return;
 
-        // El MVP no incluye imágenes reales de producto; se usa un placeholder
-        // servido por el frontend (public/placeholder.svg). En producción
-        // cada producto tendría su imagen en un CDN.
-        const string img = "/placeholder.svg";
         var products = new List<Product>
         {
-            Product.Create("TNS-001", "Nike Air Max 90", "Clásico diseño con unidad de aire visible.", img, ProductSize.Nine, ProductColor.White, 459900, 20),
-            Product.Create("TNS-002", "Adidas Ultraboost 22", "Máxima amortiguación para largas distancias.", img, ProductSize.Eight, ProductColor.Black, 539900, 15),
-            Product.Create("TNS-003", "Puma RS-X", "Diseño retro con suela gruesa y colores vibrantes.", img, ProductSize.Ten, ProductColor.Gray, 319900, 25),
-            Product.Create("TNS-004", "New Balance 574", "Icónico tenis casual con suela de gamuza.", img, ProductSize.Seven, ProductColor.Gray, 289900, 18),
-            Product.Create("TNS-005", "Nike React Infinity", "Diseñado para reducir el riesgo de lesiones.", img, ProductSize.Nine, ProductColor.Black, 489900, 12),
-            Product.Create("TNS-006", "Adidas Stan Smith", "Clásico tenis de cuero para uso casual.", img, ProductSize.Eight, ProductColor.White, 249900, 30),
-            Product.Create("TNS-007", "Reebok Club C 85", "Tenis vintage de cuero con estilo minimalista.", img, ProductSize.Seven, ProductColor.White, 219900, 22),
-            Product.Create("TNS-008", "Nike Air Force 1", "El icónico tenis de baloncesto hecho casual.", img, ProductSize.Ten, ProductColor.White, 369900, 35),
-            Product.Create("TNS-009", "Adidas NMD R1", "Tenis lifestyle con boost y barras decorativas.", img, ProductSize.Nine, ProductColor.Black, 429900, 10),
-            Product.Create("TNS-010", "Puma Suede Classic", "Tenis de ante con historia desde 1968.", img, ProductSize.Eight, ProductColor.Gray, 199900, 28)
+            Product.Create("TNS-001", "Nike Air Max 90", "Clásico diseño con unidad de aire visible.", "/images/tns-001.jpg", ProductSize.Nine, ProductColor.White, 459900, 20),
+            Product.Create("TNS-002", "Adidas Ultraboost 22", "Máxima amortiguación para largas distancias.", "/images/tns-002.jpg", ProductSize.Eight, ProductColor.Black, 539900, 15),
+            Product.Create("TNS-003", "Puma RS-X", "Diseño retro con suela gruesa y colores vibrantes.", "/images/tns-003.jpg", ProductSize.Ten, ProductColor.Gray, 319900, 25),
+            Product.Create("TNS-004", "New Balance 574", "Icónico tenis casual con suela de gamuza.", "/images/tns-004.jpg", ProductSize.Seven, ProductColor.Gray, 289900, 18),
+            Product.Create("TNS-005", "Nike React Infinity", "Diseñado para reducir el riesgo de lesiones.", "/images/tns-005.jpg", ProductSize.Nine, ProductColor.Black, 489900, 12),
+            Product.Create("TNS-006", "Adidas Stan Smith", "Clásico tenis de cuero para uso casual.", "/images/tns-006.jpg", ProductSize.Eight, ProductColor.White, 249900, 30),
+            Product.Create("TNS-007", "Reebok Club C 85", "Tenis vintage de cuero con estilo minimalista.", "/images/tns-007.jpg", ProductSize.Seven, ProductColor.White, 219900, 22),
+            Product.Create("TNS-008", "Nike Air Force 1", "El icónico tenis de baloncesto hecho casual.", "/images/tns-008.jpg", ProductSize.Ten, ProductColor.White, 369900, 35),
+            Product.Create("TNS-009", "Adidas NMD R1", "Tenis lifestyle con boost y barras decorativas.", "/images/tns-009.jpg", ProductSize.Nine, ProductColor.Black, 429900, 10),
+            Product.Create("TNS-010", "Puma Suede Classic", "Tenis de ante con historia desde 1968.", "/images/tns-010.jpg", ProductSize.Eight, ProductColor.Gray, 199900, 28)
         };
 
         await ctx.Products.AddRangeAsync(products);
